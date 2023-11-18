@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "asn-check"
 dynamic = ["version"]
-description = 'Check if list of IPs belong to list of specified ASNs'
+description = 'Check ASNs and metadata for a list of IPs'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "GPL-3.0-only"
