@@ -93,9 +93,7 @@ def time_decorator(f):
     default="whois.radb.net",
     show_default=True,
 )
-@click.option(
-    "--whois-port", help="Whois port", type=int, default=43, show_default=True
-)
+@click.option("--whois-port", help="Whois port", type=int, default=43, show_default=True)
 @click.option(
     "--asn-num",
     help="ASN Number to get IPs for",
@@ -113,9 +111,7 @@ def time_decorator(f):
 )
 @log_decorator
 @time_decorator
-def main(
-    input_file, output_file, shelve_file, whois_host, whois_port, asn_num, log_level
-):
+def main(input_file, output_file, shelve_file, whois_host, whois_port, asn_num, log_level):
     """Console script for asn_check
 
     If you have a list of ASNs and a list of IPv4 addresses, this script can assign ASN nums to those addresses.
@@ -129,9 +125,7 @@ def main(
     with shelve.open(shelve_file) as all_nets:
         for asn in asn_num:
             if str(asn) in all_nets:
-                log.info(
-                    f"Loading AS{asn} from cache {shelve_file}, got {len(all_nets[str(asn)])} subnets"
-                )
+                log.info(f"Loading AS{asn} from cache {shelve_file}, got {len(all_nets[str(asn)])} subnets")
             else:
                 data = get_asn_routes(asn, whois_host, whois_port)
                 nets = parse_whois_response(data)

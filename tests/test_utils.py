@@ -57,9 +57,7 @@ def test_ipv4_re():
                 case["label"], case["output"], output
             )
         except Exception as e:
-            assert type(e) == case["ex"], "case '{}', ex: exp {}, got {}".format(
-                case["label"], case["ex"], type(e)
-            )
+            assert type(e) == case["ex"], "case '{}', ex: exp {}, got {}".format(case["label"], case["ex"], type(e))
 
 
 def test_ipv4_net_re():
@@ -140,6 +138,4 @@ def test_ipv4_net_re():
                 case["label"], case["output"], output
             )
         except Exception as e:
-            assert type(e) == case["ex"], "case '{}', ex: exp {}, got {}".format(
-                case["label"], case["ex"], type(e)
-            )
+            assert type(e) == case["ex"], "case '{}', ex: exp {}, got {}".format(case["label"], case["ex"], type(e))

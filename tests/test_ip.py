@@ -53,6 +53,4 @@ def test_ip_search():
                 case["label"], case["output"], output
             )
         except Exception as e:
-            assert type(e) == case["ex"], "case '{}', ex: exp {}, got {}".format(
-                case["label"], case["ex"], type(e)
-            )
+            assert type(e) == case["ex"], "case '{}', ex: exp {}, got {}".format(case["label"], case["ex"], type(e))
