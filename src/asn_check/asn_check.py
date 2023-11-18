@@ -12,9 +12,10 @@ import shelve
 from functools import update_wrapper
 
 import click
+import requests
 
 from asn_check.ip_binary_tree import IPTree
-from asn_check.whois import get_asn_routes, parse_whois_response
+from asn_check.data import get_data, parse_asn_routes, parse_asn_names
 from asn_check.utils import ipv4_re, ipv4_net_re
 
 
@@ -75,31 +76,9 @@ def time_decorator(f):
 )
 @click.option(
     "--output-file",
-    help="Output file - csv, header: ip,asn [default: STDOUT]",
+    help="Output file - csv, header: ip,asn,name,country_code [default: STDOUT]",
     type=click.File("at"),
     default=sys.stdout,
-)
-@click.option(
-    "--shelve-file",
-    help="Shelve cache file",
-    type=click.Path(file_okay=True, writable=True, readable=True),
-    default="/tmp/asn_check_cache.shl",
-    show_default=True,
-)
-@click.option(
-    "--whois-host",
-    help="Whois hostname",
-    type=str,
-    default="whois.radb.net",
-    show_default=True,
-)
-@click.option("--whois-port", help="Whois port", type=int, default=43, show_default=True)
-@click.option(
-    "--asn-num",
-    help="ASN Number to get IPs for",
-    type=int,
-    required=True,
-    multiple=True,
 )
 @click.option(
     "--log-level",
@@ -111,7 +90,7 @@ def time_decorator(f):
 )
 @log_decorator
 @time_decorator
-def main(input_file, output_file, shelve_file, whois_host, whois_port, asn_num, log_level):
+def main(input_file, output_file, log_level):
     """Console script for asn_check
 
     If you have a list of ASNs and a list of IPv4 addresses, this script can assign ASN nums to those addresses.
@@ -122,24 +101,19 @@ def main(input_file, output_file, shelve_file, whois_host, whois_port, asn_num, 
     # ======================================================================
     #                        Your script starts here!
     # ======================================================================
-    with shelve.open(shelve_file) as all_nets:
-        for asn in asn_num:
-            if str(asn) in all_nets:
-                log.info(f"Loading AS{asn} from cache {shelve_file}, got {len(all_nets[str(asn)])} subnets")
-            else:
-                data = get_asn_routes(asn, whois_host, whois_port)
-                nets = parse_whois_response(data)
-                all_nets[str(asn)] = nets
-                log.info(f"Fetched {len(nets)} subnets for {asn}")
-                time.sleep(10)  # be polite!
-        log.info(f"Construct the tree..")
-        iptree = IPTree()
-        for asn in all_nets:
-            for net in all_nets[asn]:
-                iptree.add_ip(net, f"AS{asn}")
+    log.info(f"Get data")
+    asn_routes, asn_names = get_data()
+    log.info(f"Parse data")
+    all_nets = parse_asn_routes(asn_routes)
+    names = parse_asn_names(asn_names)
+
+    log.info(f"Construct the tree..")
+    iptree = IPTree()
+    for asn in all_nets:
+        for net in all_nets[asn]:
+            iptree.add_ip(net, f"{asn}")
 
     log.info("Load addresses")
-
     if input_file.isatty():
         logging.critical("Input from stdin which is a tty - aborting")
         return 128
@@ -149,10 +123,12 @@ def main(input_file, output_file, shelve_file, whois_host, whois_port, asn_num, 
     log.info(f"Got {len(addresses)} addresses")
 
     log.info(f"Searching...")
-    output_file.write("ip,asn\n")
+    header = ["ip", "asn", "name", "country_code"]
+    writer = csv.DictWriter(output_file, fieldnames=header)
     for addr in addresses:
         label = iptree.search(addr)
-        output_file.write(f"{addr},{label}\n")
+        meta = names.get(label,{"name":"", "country_code":""})
+        writer.writerow({"ip":addr,"asn":label,"name":meta["name"],"country_code":meta["country_code"]})
     return 0
 
 

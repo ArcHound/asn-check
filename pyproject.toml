@@ -24,12 +24,19 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "click",
+  "requests-cache",
+  "platformdirs"
+]
 
 [project.urls]
 Documentation = "https://github.com/ArcHound/asn-check#readme"
 Issues = "https://github.com/ArcHound/asn-check/issues"
 Source = "https://github.com/ArcHound/asn-check"
+
+[project.scripts]
+asn_check = "asn_check.asn_check:main"
 
 [tool.hatch.version]
 path = "src/asn_check/__about__.py"
@@ -38,7 +45,6 @@ path = "src/asn_check/__about__.py"
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
-  "click",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
