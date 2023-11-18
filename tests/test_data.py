@@ -57,10 +57,10 @@ def test_parse_asn_names():
 28 DFVLR-SYS Deutsches Zentrum fuer Luft- und Raumfahrt e.V., DE"""
             },
             "output": {
-                "25":{"name":"UCB", "country_code":"US"},
-                "26":{"name":"CORNELL", "country_code":"US"},
-                "27":{"name":"UMDNET", "country_code":"US"},
-                "28":{"name":"DFVLR-SYS Deutsches Zentrum fuer Luft- und Raumfahrt e.V.", "country_code":"DE"},
+                "25": {"name": "UCB", "country_code": "US"},
+                "26": {"name": "CORNELL", "country_code": "US"},
+                "27": {"name": "UMDNET", "country_code": "US"},
+                "28": {"name": "DFVLR-SYS Deutsches Zentrum fuer Luft- und Raumfahrt e.V.", "country_code": "DE"},
             },
             "ex": None,
         },

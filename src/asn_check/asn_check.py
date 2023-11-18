@@ -70,7 +70,7 @@ def time_decorator(f):
 @click.command()
 @click.option(
     "--input-file",
-    help="Input file with one IPv4 per line[default: STDIN]",
+    help="Input file with one IPv4 per line [default: STDIN]",
     type=click.File("rt"),
     default=sys.stdin,
 )
@@ -125,10 +125,11 @@ def main(input_file, output_file, log_level):
     log.info(f"Searching...")
     header = ["ip", "asn", "name", "country_code"]
     writer = csv.DictWriter(output_file, fieldnames=header)
+    writer.writeheader()
     for addr in addresses:
         label = iptree.search(addr)
-        meta = names.get(label,{"name":"", "country_code":""})
-        writer.writerow({"ip":addr,"asn":label,"name":meta["name"],"country_code":meta["country_code"]})
+        meta = names.get(label, {"name": "", "country_code": ""})
+        writer.writerow({"ip": addr, "asn": label, "name": meta["name"], "country_code": meta["country_code"]})
     return 0
 
 
