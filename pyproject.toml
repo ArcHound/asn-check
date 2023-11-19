@@ -4,17 +4,17 @@ build-backend = "hatchling.build"
 
 [project]
 name = "asn-check"
-dynamic = ["version"]
+version = "1.0"
 description = 'Check ASNs and metadata for a list of IPs'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "GPL-3.0-only"
-keywords = []
+keywords = ["ipv4", "asn-lookup", "click", "ripe"]
 authors = [
   { name = "Miloslav Homer", email = "miloslav.homer@gmail.com" },
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
@@ -37,9 +37,6 @@ Source = "https://github.com/ArcHound/asn-check"
 
 [project.scripts]
 asn_check = "asn_check.asn_check:main"
-
-[tool.hatch.version]
-path = "src/asn_check/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -148,9 +145,7 @@ ban-relative-imports = "all"
 source_pkgs = ["src/asn_check", "tests"]
 branch = true
 parallel = true
-omit = [
-  "src/asn_check/__about__.py",
-]
+omit = []
 
 [tool.coverage.paths]
 asn_check = ["src/asn_check", "*/asn-check/src/asn_check"]

@@ -93,7 +93,7 @@ def time_decorator(f):
 def main(input_file, output_file, log_level):
     """Console script for asn_check
 
-    If you have a list of ASNs and a list of IPv4 addresses, this script can assign ASN nums to those addresses.
+    If you have a list of IPv4 addresses, this script can assign AS nums, AS names and country codes to those addresses.
 
     Queries whois services (with caching).
 
@@ -107,7 +107,7 @@ def main(input_file, output_file, log_level):
     all_nets = parse_asn_routes(asn_routes)
     names = parse_asn_names(asn_names)
 
-    log.info(f"Construct the tree..")
+    log.info(f"Construct the tree")
     iptree = IPTree()
     for asn in all_nets:
         for net in all_nets[asn]:
