@@ -6,11 +6,16 @@ ASN Check
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch)
 
-Given a list of IPs the tool returns their ASN numbers and names.
+Given a list of IPs the tool returns their AS numbers and names.
 
 Data sources:
-  - [ASN ranges - Thyme APNIC](https://thyme.apnic.net/current/data-raw-table)
-  - [ASN names - ripe.net](https://ftp.ripe.net/ripe/asnames/asn.txt)
+  - [ASN ranges - Thyme APNIC](https://thyme.apnic.net/current/data-raw-table),
+  - [AS names - ripe.net](https://ftp.ripe.net/ripe/asnames/asn.txt).
+
+Features:
+  - Caching the data from sources - first run may take a long time,
+  - Binary IP network search for high throughput,
+  - Returns AS Number, AS Name and a country code for each IP address.
 
 Installation
 ------------
@@ -21,9 +26,8 @@ Installation
 Options
 -------
 
-    Options:
-      --input-file FILENAME           Input file with one IPv4 per line[default:STDIN]
-      --output-file FILENAME          Output file - csv, header: ip,asn,name,country_code [default: STDOUT]
+      --input-file FILENAME           Input file with one IPv4 per line  [default:STDIN]
+      --output-file FILENAME          Output file - csv, header: ip,asn,name,country_code  [default: STDOUT]
       --log-level [DEBUG|INFO|WARNING|ERROR|CRITICAL] Set logging level.  [default: WARNING]
       --help                          Show this message and exit.
 
@@ -39,7 +43,7 @@ Example
         85.227.158.196
         74.74.207.74' | asn_check 
 
-Output
+Output:
 
     ip,asn,name,country_code
     250.254.147.119,,,
