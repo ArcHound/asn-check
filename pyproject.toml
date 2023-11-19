@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "asn-check"
-version = "1.0"
+version = "1.0.1"
 description = 'Check ASNs and metadata for a list of IPs'
 readme = "README.md"
 requires-python = ">=3.7"
@@ -36,7 +36,7 @@ Issues = "https://github.com/ArcHound/asn-check/issues"
 Source = "https://github.com/ArcHound/asn-check"
 
 [project.scripts]
-asn_check = "asn_check.asn_check:main"
+asn-check = "asn_check.asn_check:main"
 
 [tool.hatch.envs.default]
 dependencies = [

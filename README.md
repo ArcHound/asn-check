@@ -20,7 +20,7 @@ Features:
 Installation
 ------------
 
-    pip install asn_check
+    pip install asn-check
 
 
 Options
@@ -41,7 +41,7 @@ Example
         176.218.30.1078
         128.105.177.84
         85.227.158.196
-        74.74.207.74' | asn_check 
+        74.74.207.74' | asn-check 
 
 Output:
 
