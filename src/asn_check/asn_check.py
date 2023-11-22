@@ -71,14 +71,12 @@ def time_decorator(f):
 @click.option(
     "--input-file",
     help="Input file with one IPv4 per line [default: STDIN]",
-    type=click.File("rt"),
-    default=sys.stdin,
+    type=click.Path(file_okay=True, dir_okay=False, readable=True, exists=True),
 )
 @click.option(
     "--output-file",
     help="Output file - csv, header: ip,asn,name,country_code [default: STDOUT]",
-    type=click.File("at"),
-    default=sys.stdout,
+    type=click.Path(file_okay=True, dir_okay=False, writable=True),
 )
 @click.option(
     "--log-level",
@@ -114,22 +112,30 @@ def main(input_file, output_file, log_level):
             iptree.add_ip(net, f"{asn}")
 
     log.info("Load addresses")
-    if input_file.isatty():
-        logging.critical("Input from stdin which is a tty - aborting")
-        return 128
-    with input_file:
-        in_data = input_file.read().splitlines()
+    in_data = ""
+    if not input_file:
+        in_data = sys.stdin.read().splitlines()
+    else:
+        with open(input_file, 'r') as f:
+            in_data = f.read().splitlines()
     addresses = [ipaddress.IPv4Address(addr) for addr in in_data if ipv4_re.match(addr)]
     log.info(f"Got {len(addresses)} addresses")
 
     log.info(f"Searching...")
     header = ["ip", "asn", "name", "country_code"]
-    writer = csv.DictWriter(output_file, fieldnames=header)
+    output_str = None
+    if not output_file:
+        output_str = sys.stdout
+    else:
+        output_str = open(output_file, 'w')
+    writer = csv.DictWriter(output_str, fieldnames=header)
     writer.writeheader()
     for addr in addresses:
         label = iptree.search(addr)
         meta = names.get(label, {"name": "", "country_code": ""})
         writer.writerow({"ip": addr, "asn": label, "name": meta["name"], "country_code": meta["country_code"]})
+    if output_file:
+        output_str.close()
     return 0
 
 
