@@ -13,41 +13,35 @@ class IPTree:
         self.root = IPNode()
 
     def add_ip(self, ip: ipaddress.IPv4Network, label: str):
-        addr_netmask = bin(int(ip.netmask))[2:].rjust(32, "0")
-        addr_ip = bin(int(ip.network_address))[2:].rjust(32, "0")
-        addr_pointer = 0
+        addr_ip_netmask = int(ip.netmask)
+        addr_ip = int(ip.network_address)
         node_pointer = self.root
-        for c in addr_netmask:
-            if c == "0":
+        for i in range(32):
+            if not addr_ip_netmask & 1<<31-i:
                 node_pointer.value = label
                 break
-            if addr_ip[addr_pointer] == "0":
-                if node_pointer.zero is None:
-                    node_pointer.zero = IPNode()
-                node_pointer = node_pointer.zero
-            else:
+            if addr_ip & 1<<31-i:
                 if node_pointer.one is None:
                     node_pointer.one = IPNode()
                 node_pointer = node_pointer.one
-            addr_pointer += 1
-            if addr_pointer == 32:
-                node_pointer.value = label
+            else:
+                if node_pointer.zero is None:
+                    node_pointer.zero = IPNode()
+                node_pointer = node_pointer.zero
+        node_pointer.value = label
 
     def search(self, ip: ipaddress.IPv4Address) -> str:
         node_pointer = self.root
-        addr_ip = bin(int(ip))[2:].rjust(32, "0")
-        addr_pointer = 0
-        for c in addr_ip:
+        addr_ip = int(ip)
+        for i in range(32):
             if node_pointer is None:
                 return None
             if node_pointer.value is not None:
                 return node_pointer.value
-            if c == "0":
-                node_pointer = node_pointer.zero
-            else:
+            if addr_ip & 1<<31-i:
                 node_pointer = node_pointer.one
-            addr_pointer += 1
-            if addr_pointer == 32:
-                if node_pointer is not None and node_pointer.value is not None:
-                    return node_pointer.value
+            else:
+                node_pointer = node_pointer.zero
+        if node_pointer is not None and node_pointer.value is not None:
+            return node_pointer.value
         return None

@@ -10,6 +10,7 @@ import math
 import ipaddress
 import shelve
 from functools import update_wrapper
+import cProfile, pstats
 
 import click
 import requests
@@ -124,6 +125,7 @@ def main(input_file, output_file, log_level):
 
     log.info(f"Searching...")
     header = ["ip", "asn", "name", "country_code"]
+    # with cProfile.Profile() as profile:
     with click.open_file(output_file, 'w') as output_str:
         writer = csv.DictWriter(output_str, fieldnames=header)
         writer.writeheader()
@@ -131,6 +133,7 @@ def main(input_file, output_file, log_level):
             label = iptree.search(addr)
             meta = names.get(label, {"name": "", "country_code": ""})
             writer.writerow({"ip": addr, "asn": label, "name": meta["name"], "country_code": meta["country_code"]})
+        # pstats.Stats(profile).strip_dirs().sort_stats('cumulative').print_stats()
     return 0
 
 
