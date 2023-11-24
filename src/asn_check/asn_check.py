@@ -77,6 +77,7 @@ def time_decorator(f):
     "--output-file",
     help="Output file - csv, header: ip,asn,name,country_code [default: STDOUT]",
     type=click.Path(file_okay=True, dir_okay=False, writable=True),
+    default='-',
 )
 @click.option(
     "--log-level",
@@ -123,19 +124,13 @@ def main(input_file, output_file, log_level):
 
     log.info(f"Searching...")
     header = ["ip", "asn", "name", "country_code"]
-    output_str = None
-    if not output_file:
-        output_str = sys.stdout
-    else:
-        output_str = open(output_file, 'w')
-    writer = csv.DictWriter(output_str, fieldnames=header)
-    writer.writeheader()
-    for addr in addresses:
-        label = iptree.search(addr)
-        meta = names.get(label, {"name": "", "country_code": ""})
-        writer.writerow({"ip": addr, "asn": label, "name": meta["name"], "country_code": meta["country_code"]})
-    if output_file:
-        output_str.close()
+    with click.open_file(output_file, 'w') as output_str:
+        writer = csv.DictWriter(output_str, fieldnames=header)
+        writer.writeheader()
+        for addr in addresses:
+            label = iptree.search(addr)
+            meta = names.get(label, {"name": "", "country_code": ""})
+            writer.writerow({"ip": addr, "asn": label, "name": meta["name"], "country_code": meta["country_code"]})
     return 0
 
 
