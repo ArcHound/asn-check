@@ -9,13 +9,18 @@ ASN Check
 Given a list of IPs the tool returns their AS numbers and names.
 
 Data sources:
-  - [ASN ranges - Thyme APNIC](https://thyme.apnic.net/current/data-raw-table),
+
+  - [ASN ranges IPv4- Thyme APNIC](https://thyme.apnic.net/current/data-raw-table),
+  - [ASN ranges IPv6- Thyme APNIC](https://thyme.apnic.net/current/ipv6-raw-table),
   - [AS names - ripe.net](https://ftp.ripe.net/ripe/asnames/asn.txt).
 
 Features:
+
   - Caching the data from sources - first run may take a long time,
   - Binary IP network search for high throughput,
   - Returns AS Number, AS Name and a country code for each IP address.
+  - Supports both IPv4 and IPv6
+
 
 Installation
 ------------
@@ -41,7 +46,8 @@ Example
         176.218.30.1078
         128.105.177.84
         85.227.158.196
-        74.74.207.74' | asn-check 
+        74.74.207.74
+        2a03:2880:f077::1' | asn-check 
 
 Output:
 
@@ -52,4 +58,5 @@ Output:
     128.105.177.84,59,WISC-MADISON-AS,US
     85.227.158.196,2119,TELENOR-NEXTEL Telenor Norge AS,NO
     74.74.207.74,11351,TWC-11351-NORTHEAST,US
+    2a03:2880:f077::1,32934,FACEBOOK,US
  

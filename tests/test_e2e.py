@@ -14,7 +14,9 @@ def test_e2e_file():
 176.218.30.1078
 128.105.177.84
 85.227.158.196
-74.74.207.74"""
+74.74.207.74
+2a03:2880:f077::1
+"""
             )
         result = runner.invoke(main, ["--input-file", "input.txt", "--output-file", "output.txt"])
         assert result.exit_code == 0
@@ -29,6 +31,7 @@ def test_e2e_file():
 128.105.177.84,59,WISC-MADISON-AS,US
 85.227.158.196,2119,TELENOR-NEXTEL Telenor Norge AS,NO
 74.74.207.74,11351,TWC-11351-NORTHEAST,US
+2a03:2880:f077::1,32934,FACEBOOK,US
 """
         )
 
@@ -43,6 +46,7 @@ def test_e2e_stdin():
 128.105.177.84
 85.227.158.196
 74.74.207.74
+2a03:2880:f077::1
 """
         result = runner.invoke(main, ["--output-file", "output.txt"], input=test_data)
         assert result.exit_code == 0
@@ -57,6 +61,7 @@ def test_e2e_stdin():
 128.105.177.84,59,WISC-MADISON-AS,US
 85.227.158.196,2119,TELENOR-NEXTEL Telenor Norge AS,NO
 74.74.207.74,11351,TWC-11351-NORTHEAST,US
+2a03:2880:f077::1,32934,FACEBOOK,US
 """
         )
 
@@ -72,7 +77,8 @@ def test_e2e_stdout():
 176.218.30.1078
 128.105.177.84
 85.227.158.196
-74.74.207.74"""
+74.74.207.74
+2a03:2880:f077::1"""
             )
         result = runner.invoke(main, ["--input-file", "input.txt"])
         assert result.exit_code == 0
@@ -85,5 +91,6 @@ def test_e2e_stdout():
 128.105.177.84,59,WISC-MADISON-AS,US
 85.227.158.196,2119,TELENOR-NEXTEL Telenor Norge AS,NO
 74.74.207.74,11351,TWC-11351-NORTHEAST,US
+2a03:2880:f077::1,32934,FACEBOOK,US
 """
         )

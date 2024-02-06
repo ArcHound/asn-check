@@ -17,7 +17,7 @@ import requests
 
 from asn_check.ip_binary_tree import IPTree
 from asn_check.data import get_data, parse_asn_routes, parse_asn_names
-from asn_check.utils import ipv4_re, ipv4_net_re
+from asn_check.utils import ipv4_re, ipv6_re
 
 
 logging.basicConfig(
@@ -71,7 +71,7 @@ def time_decorator(f):
 @click.command()
 @click.option(
     "--input-file",
-    help="Input file with one IPv4 per line [default: STDIN]",
+    help="Input file with one IPv4/IPv6 per line [default: STDIN]",
     type=click.Path(file_okay=True, dir_okay=False, readable=True, exists=True),
 )
 @click.option(
@@ -93,7 +93,7 @@ def time_decorator(f):
 def main(input_file, output_file, log_level):
     """Console script for asn_check
 
-    If you have a list of IPv4 addresses, this script can assign AS nums, AS names and country codes to those addresses.
+    If you have a list of IPv4/IPv6 addresses, this script can assign AS nums, AS names and country codes to those addresses.
 
     Queries whois services (with caching).
 
@@ -102,9 +102,9 @@ def main(input_file, output_file, log_level):
     #                        Your script starts here!
     # ======================================================================
     log.info(f"Get data")
-    asn_routes, asn_names = get_data()
+    asn_routes_v4, asn_routes_v6, asn_names = get_data()
     log.info(f"Parse data")
-    all_nets = parse_asn_routes(asn_routes)
+    all_nets = parse_asn_routes(asn_routes_v4, asn_routes_v6)
     names = parse_asn_names(asn_names)
 
     log.info(f"Construct the tree")
@@ -120,7 +120,12 @@ def main(input_file, output_file, log_level):
     else:
         with open(input_file, 'r') as f:
             in_data = f.read().splitlines()
-    addresses = [ipaddress.IPv4Address(addr) for addr in in_data if ipv4_re.match(addr)]
+    addresses = list()
+    for addr in in_data:
+        if ipv4_re.match(addr):
+            addresses.append(ipaddress.IPv4Address(addr))
+        elif ipv6_re.match(addr):
+            addresses.append(ipaddress.IPv6Address(addr))
     log.info(f"Got {len(addresses)} addresses")
 
     log.info(f"Searching...")
