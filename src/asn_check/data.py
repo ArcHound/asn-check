@@ -11,14 +11,18 @@ ASN_ROUTES_URL_V6 = 'https://thyme.apnic.net/current/ipv6-raw-table'
 ASN_NAMES_URL = 'https://ftp.ripe.net/ripe/asnames/asn.txt'
 
 
-def get_data():
+def get_data(
+    asn_routes_url_v4: str = ASN_ROUTES_URL_V4,
+    asn_routes_url_v6: str = ASN_ROUTES_URL_V6,
+    asn_names_url: str = ASN_NAMES_URL,
+):
     session = CachedSession(user_cache_dir('asn_check', 'mh'), cache_control=True, backend='filesystem')
-    log.info(f"Getting ASN routes v4 from {ASN_ROUTES_URL_V4}")
-    asn_routes_v4 = session.get(ASN_ROUTES_URL_V4)
-    log.info(f"Getting ASN routes v6 from {ASN_ROUTES_URL_V6}")
-    asn_routes_v6 = session.get(ASN_ROUTES_URL_V6)
-    log.info(f"Getting ASN names from {ASN_NAMES_URL}")
-    asn_names = session.get(ASN_NAMES_URL)
+    log.info(f"Getting ASN routes v4 from {asn_routes_url_v4}")
+    asn_routes_v4 = session.get(asn_routes_url_v4)
+    log.info(f"Getting ASN routes v6 from {asn_routes_url_v6}")
+    asn_routes_v6 = session.get(asn_routes_url_v6)
+    log.info(f"Getting ASN names from {asn_names_url}")
+    asn_names = session.get(asn_names_url)
     return asn_routes_v4.text, asn_routes_v6.text, asn_names.text
 
 

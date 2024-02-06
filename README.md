@@ -20,6 +20,7 @@ Features:
   - Binary IP network search for high throughput,
   - Returns AS Number, AS Name and a country code for each IP address.
   - Supports both IPv4 and IPv6
+  - Also available as a lib!
 
 
 Installation
@@ -37,8 +38,8 @@ Options
       --help                          Show this message and exit.
 
 
-Example
--------
+Example CLI
+-----------
 
     $ echo '250.254.147.119
         12.154.0.67
@@ -60,3 +61,18 @@ Output:
     74.74.207.74,11351,TWC-11351-NORTHEAST,US
     2a03:2880:f077::1,32934,FACEBOOK,US
  
+
+Example Lib Usage
+-----------------
+
+    from ipaddress import ip_address
+    from asn_check import ASNChecker
+    
+    checker = ASNChecker() 
+    print(checker.search(ip_address("12.154.0.67")))
+
+Output:
+
+    {'ip': IPv4Address('12.154.0.67'), 'asn': '7018', 'name': 'ATT-INTERNET4', 'country_code': 'US'}
+
+Note: If you'd like to use your own data sources, theoretically you can, but they need to follow the same format as the APNIC sources (and the format is not consistent!) - check out the constructor options `asn_routes_url_v4, asn_routes_url_v6, asn_names_url`. I'd recommend sticking to the defaults.

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "asn-check"
-version = "1.0.1"
+version = "1.1.0"
 description = 'Check ASNs and metadata for a list of IPs'
 readme = "README.md"
 requires-python = ">=3.7"

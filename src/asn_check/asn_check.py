@@ -8,6 +8,7 @@ import sys
 import time
 import math
 import ipaddress
+from typing import Union
 import shelve
 from functools import update_wrapper
 import cProfile, pstats
@@ -15,8 +16,16 @@ import cProfile, pstats
 import click
 import requests
 
+from asn_check import ASNChecker
 from asn_check.ip_binary_tree import IPTree
-from asn_check.data import get_data, parse_asn_routes, parse_asn_names
+from asn_check.data import (
+    get_data,
+    parse_asn_routes,
+    parse_asn_names,
+    ASN_ROUTES_URL_V4,
+    ASN_ROUTES_URL_V6,
+    ASN_NAMES_URL,
+)
 from asn_check.utils import ipv4_re, ipv6_re
 
 
@@ -101,43 +110,29 @@ def main(input_file, output_file, log_level):
     # ======================================================================
     #                        Your script starts here!
     # ======================================================================
-    log.info(f"Get data")
-    asn_routes_v4, asn_routes_v6, asn_names = get_data()
-    log.info(f"Parse data")
-    all_nets = parse_asn_routes(asn_routes_v4, asn_routes_v6)
-    names = parse_asn_names(asn_names)
+    asn_checker = ASNChecker()
 
-    log.info(f"Construct the tree")
-    iptree = IPTree()
-    for asn in all_nets:
-        for net in all_nets[asn]:
-            iptree.add_ip(net, f"{asn}")
-
-    log.info("Load addresses")
-    in_data = ""
-    if not input_file:
-        in_data = sys.stdin.read().splitlines()
-    else:
-        with open(input_file, 'r') as f:
-            in_data = f.read().splitlines()
-    addresses = list()
-    for addr in in_data:
-        if ipv4_re.match(addr):
-            addresses.append(ipaddress.IPv4Address(addr))
-        elif ipv6_re.match(addr):
-            addresses.append(ipaddress.IPv6Address(addr))
-    log.info(f"Got {len(addresses)} addresses")
-
-    log.info(f"Searching...")
-    header = ["ip", "asn", "name", "country_code"]
     # with cProfile.Profile() as profile:
     with click.open_file(output_file, 'w') as output_str:
+        log.debug("Processing")
+        header = ["ip", "asn", "name", "country_code"]
         writer = csv.DictWriter(output_str, fieldnames=header)
         writer.writeheader()
-        for addr in addresses:
-            label = iptree.search(addr)
-            meta = names.get(label, {"name": "", "country_code": ""})
-            writer.writerow({"ip": addr, "asn": label, "name": meta["name"], "country_code": meta["country_code"]})
+        in_file = ''
+        try:
+            if not input_file:
+                in_file = sys.stdin
+            else:
+                in_file = open(input_file, 'r')
+            for _, line in enumerate(in_file):
+                try:
+                    address = ipaddress.ip_address(line.strip())
+                    result = asn_checker.search(address)
+                    writer.writerow(result)
+                except ValueError as e:
+                    log.error(f"Invalid address {line}: {e}")
+        finally:
+            in_file.close()
         # pstats.Stats(profile).strip_dirs().sort_stats('cumulative').print_stats()
     return 0
 
