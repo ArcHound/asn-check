@@ -2,6 +2,7 @@ from requests_cache import CachedSession
 from platformdirs import user_cache_dir
 import ipaddress
 from collections import defaultdict
+from asn_check.rfc6890 import assigned_ranges, assigned_names
 import logging
 
 log = logging.getLogger("__main__")
@@ -32,6 +33,8 @@ def parse_asn_routes(asn_routes_v4: str, asn_routes_v6: str):
     total_dict = dict()
     for key in set(list(v4.keys()) + list(v6.keys())):
         total_dict[key] = list(set(v4.get(key, []) + v6.get(key, [])))
+    for key, value in assigned_ranges.items():
+        total_dict[key] = value
     return total_dict
 
 
@@ -78,4 +81,6 @@ def parse_asn_names(asn_names: str):
             result[asn] = {'name': name, 'country_code': code}
         except:
             log.error(f"Invalid ASN name format: '{line}'")
+    for key, value in assigned_names.items():
+        result[key] = value
     return result

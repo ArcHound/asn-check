@@ -25,7 +25,7 @@ def test_e2e_file():
         assert (
             output
             == """ip,asn,name,country_code
-250.254.147.119,,,
+250.254.147.119,rfc6890-t15,Reserved for Future Use,IANA
 12.154.0.67,7018,ATT-INTERNET4,US
 41.13.122.240,29975,VODACOM-,ZA
 128.105.177.84,59,WISC-MADISON-AS,US
@@ -55,7 +55,7 @@ def test_e2e_stdin():
         assert (
             output
             == """ip,asn,name,country_code
-250.254.147.119,,,
+250.254.147.119,rfc6890-t15,Reserved for Future Use,IANA
 12.154.0.67,7018,ATT-INTERNET4,US
 41.13.122.240,29975,VODACOM-,ZA
 128.105.177.84,59,WISC-MADISON-AS,US
@@ -85,7 +85,7 @@ def test_e2e_stdout():
         assert (
             result.output
             == """ip,asn,name,country_code
-250.254.147.119,,,
+250.254.147.119,rfc6890-t15,Reserved for Future Use,IANA
 12.154.0.67,7018,ATT-INTERNET4,US
 41.13.122.240,29975,VODACOM-,ZA
 128.105.177.84,59,WISC-MADISON-AS,US

@@ -13,6 +13,7 @@ Data sources:
   - [ASN ranges IPv4- Thyme APNIC](https://thyme.apnic.net/current/data-raw-table),
   - [ASN ranges IPv6- Thyme APNIC](https://thyme.apnic.net/current/ipv6-raw-table),
   - [AS names - ripe.net](https://ftp.ripe.net/ripe/asnames/asn.txt).
+  - [RFC #6890](https://www.rfc-editor.org/rfc/rfc6890.txt)
 
 Features:
 
@@ -20,6 +21,7 @@ Features:
   - Binary IP network search for high throughput,
   - Returns AS Number, AS Name and a country code for each IP address.
   - Supports both IPv4 and IPv6
+  - Reserved ranges included
   - Also available as a lib!
 
 
@@ -53,7 +55,7 @@ Example CLI
 Output:
 
     ip,asn,name,country_code
-    250.254.147.119,,,
+    250.254.147.119,rfc6890-t15,Reserved for Future Use,IANA
     12.154.0.67,7018,ATT-INTERNET4,US
     41.13.122.240,29975,VODACOM-,ZA
     128.105.177.84,59,WISC-MADISON-AS,US
