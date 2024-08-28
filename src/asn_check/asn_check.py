@@ -17,17 +17,6 @@ import click
 import requests
 
 from asn_check import ASNChecker
-from asn_check.ip_binary_tree import IPTree
-from asn_check.data import (
-    get_data,
-    parse_asn_routes,
-    parse_asn_names,
-    ASN_ROUTES_URL_V4,
-    ASN_ROUTES_URL_V6,
-    ASN_NAMES_URL,
-)
-from asn_check.utils import ipv4_re, ipv6_re
-
 
 logging.basicConfig(
     level=logging.INFO,

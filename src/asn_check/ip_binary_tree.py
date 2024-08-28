@@ -22,14 +22,6 @@ class IPTree:
         else:
             raise ValueError(f"Unsupported IP type {type(ip)} (supported ipaddress.IPv4Network, ipaddress.IPv6Network)")
 
-    def search(self, ip: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]):
-        if type(ip) == ipaddress.IPv4Address:
-            return self.search_ipv4(ip)
-        elif type(ip) == ipaddress.IPv6Address:
-            return self.search_ipv6(ip)
-        else:
-            raise ValueError(f"Unsupported IP type {type(ip)} (supported ipaddress.IPv4Address, ipaddress.IPv6Address)")
-
     def add_ipv4(self, ip: ipaddress.IPv4Network, label: str):
         addr_ip_netmask = int(ip.netmask)
         addr_ip = int(ip.network_address)
@@ -47,22 +39,6 @@ class IPTree:
                     node_pointer.zero = IPNode()
                 node_pointer = node_pointer.zero
         node_pointer.value = label
-
-    def search_ipv4(self, ip: ipaddress.IPv4Address) -> str:
-        node_pointer = self.root_v4
-        addr_ip = int(ip)
-        for i in range(32):
-            if node_pointer is None:
-                return None
-            if node_pointer.value is not None:
-                return node_pointer.value
-            if addr_ip & 1 << 31 - i:
-                node_pointer = node_pointer.one
-            else:
-                node_pointer = node_pointer.zero
-        if node_pointer is not None and node_pointer.value is not None:
-            return node_pointer.value
-        return None
 
     def add_ipv6(self, ip: ipaddress.IPv6Network, label: str):
         addr_ip_netmask = int(ip.netmask)
@@ -82,7 +58,31 @@ class IPTree:
                 node_pointer = node_pointer.zero
         node_pointer.value = label
 
-    def search_ipv6(self, ip: ipaddress.IPv6Address) -> str:
+    def search(self, ip: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]) -> Union[str, None]:
+        if type(ip) == ipaddress.IPv4Address:
+            return self.search_ipv4(ip)
+        elif type(ip) == ipaddress.IPv6Address:
+            return self.search_ipv6(ip)
+        else:
+            raise ValueError(f"Unsupported IP type {type(ip)} (supported ipaddress.IPv4Address, ipaddress.IPv6Address)")
+
+    def search_ipv4(self, ip: ipaddress.IPv4Address) -> Union[str, None]:
+        node_pointer = self.root_v4
+        addr_ip = int(ip)
+        for i in range(32):
+            if node_pointer is None:
+                return None
+            if node_pointer.value is not None:
+                return node_pointer.value
+            if addr_ip & 1 << 31 - i:
+                node_pointer = node_pointer.one
+            else:
+                node_pointer = node_pointer.zero
+        if node_pointer is not None and node_pointer.value is not None:
+            return node_pointer.value
+        return None
+
+    def search_ipv6(self, ip: ipaddress.IPv6Address) -> Union[str, None]:
         node_pointer = self.root_v6
         addr_ip = int(ip)
         for i in range(128):

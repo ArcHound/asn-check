@@ -2,6 +2,7 @@ import requests
 from platformdirs import user_cache_dir
 import ipaddress
 from collections import defaultdict
+from typing import Union
 from asn_check.rfc6890 import assigned_ranges, assigned_names
 import logging
 
@@ -30,6 +31,9 @@ def get_data(
     asn_routes_url_v6: str = ASN_ROUTES_URL_V6,
     asn_names_url: str = ASN_NAMES_URL,
 ):
+    """
+    -> (str, str, str, str, str, str)
+    """
     log.info(f"Getting ASN routes v4 from {asn_routes_url_v4}")
     asn_routes_v4 = requests.get(asn_routes_url_v4)
     tag_v4 = asn_routes_v4.headers.get("ETag", "")
@@ -43,6 +47,9 @@ def get_data(
 
 
 def parse_asn_routes(asn_routes_v4: str, asn_routes_v6: str):
+    """
+    -> dict[str,list[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]]
+    """
     v4 = parse_asn_routes_v4(asn_routes_v4)
     v6 = parse_asn_routes_v6(asn_routes_v6)
     total_dict = dict()
