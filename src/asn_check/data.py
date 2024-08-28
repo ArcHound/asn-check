@@ -1,4 +1,4 @@
-from requests_cache import CachedSession
+import requests
 from platformdirs import user_cache_dir
 import ipaddress
 from collections import defaultdict
@@ -12,19 +12,34 @@ ASN_ROUTES_URL_V6 = 'https://thyme.apnic.net/current/ipv6-raw-table'
 ASN_NAMES_URL = 'https://ftp.ripe.net/ripe/asnames/asn.txt'
 
 
+def tags_need_update(tags: dict[str, str]):
+    """
+    -> bool
+    """
+    update = False
+    for url, tag in tags.items():
+        r = requests.head(url)
+        if r.headers["ETag"] != tag:
+            update = True  # might as well update it all, this will save some headaches
+            break
+    return update
+
+
 def get_data(
     asn_routes_url_v4: str = ASN_ROUTES_URL_V4,
     asn_routes_url_v6: str = ASN_ROUTES_URL_V6,
     asn_names_url: str = ASN_NAMES_URL,
 ):
-    session = CachedSession(user_cache_dir('asn_check', 'mh'), cache_control=True, backend='filesystem')
     log.info(f"Getting ASN routes v4 from {asn_routes_url_v4}")
-    asn_routes_v4 = session.get(asn_routes_url_v4)
+    asn_routes_v4 = requests.get(asn_routes_url_v4)
+    tag_v4 = asn_routes_v4.headers.get("ETag", "")
     log.info(f"Getting ASN routes v6 from {asn_routes_url_v6}")
-    asn_routes_v6 = session.get(asn_routes_url_v6)
+    asn_routes_v6 = requests.get(asn_routes_url_v6)
+    tag_v6 = asn_routes_v6.headers.get("ETag", "")
     log.info(f"Getting ASN names from {asn_names_url}")
-    asn_names = session.get(asn_names_url)
-    return asn_routes_v4.text, asn_routes_v6.text, asn_names.text
+    asn_names = requests.get(asn_names_url)
+    tag_names = asn_names.headers.get("ETag", "")
+    return asn_routes_v4.text, asn_routes_v6.text, asn_names.text, tag_v4, tag_v6, tag_names
 
 
 def parse_asn_routes(asn_routes_v4: str, asn_routes_v6: str):
