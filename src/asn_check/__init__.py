@@ -34,8 +34,10 @@ class ASNChecker:
         log.debug(f"Check cache")
         no_cache = False
         cache = dict()
+        cache_dir = user_cache_dir('asn_check', 'mh')
+        Path(cache_dir).mkdir(parents=True, exist_ok=True)
         try:
-            with open(Path(user_cache_dir('asn_check', 'mh')) / "tag_cache.json", 'r') as f:
+            with open(Path(cache_dir) / "tag_cache.json", 'r') as f:
                 cache = json.load(f)
         except Exception as e:
             log.error(e)
@@ -59,10 +61,10 @@ class ASNChecker:
             new_cache["names"] = self.names
             new_cache["tree"] = base64.b64encode(pickle.dumps(self.iptree)).decode("ascii")
             try:
-                with open(Path(user_cache_dir('asn_check', 'mh')) / "tag_cache.json", 'w') as f:
+                with open(Path(cache_dir) / "tag_cache.json", 'w') as f:
                     json.dump(new_cache, f)
             except Exception as e:
-                log.error("Couldn't save cache at " + str(Path(user_cache_dir('asn_check', 'mh')) / "tag_cache.json"))
+                log.error("Couldn't save cache at " + str(Path(cache_dir) / "tag_cache.json"))
                 log.error(e)  # no cache :( it works, but slowly
 
         else:
